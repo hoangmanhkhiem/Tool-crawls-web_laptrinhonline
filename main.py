@@ -21,7 +21,9 @@ class Problem:
 def set_problem(number_page, x):
     name_list = []
     path_list = []
-    driver.get("https://laptrinhonline.club/problems/?order=-solved&page=" + str(number_page))
+    driver.get(
+        f"https://laptrinhonline.club/problems/?order=-solved&page={str(number_page)}"
+    )
     problem_list = driver.find_elements_by_css_selector(".problem > a")[1:x]
     for pr in problem_list:
         name_list.append(pr.text)
@@ -53,7 +55,7 @@ def login_github(username_git, password_git):
 
 def up_code(username_git, repo_name, path):
     for pr in Problems:
-        driver.get("https://github.com/" + username_git + "/" + repo_name + "/upload")
+        driver.get(f"https://github.com/{username_git}/{repo_name}/upload")
         driver.find_element_by_xpath("//*[@id='upload-manifest-files-input']").send_keys(path + pr.name_file)
         driver.find_element_by_id("commit-summary-input").send_keys(pr.name)
         driver.find_element_by_id("commit-description-textarea").send_keys(pr.path)
@@ -84,16 +86,15 @@ def main():
     driver.find_element_by_id("id_password").send_keys(password)
     driver.find_element_by_id("id_password").send_keys(Keys.ENTER)
 
-    max_page = number_solved // 50
-    sur = number_solved % 50
+    max_page, sur = divmod(number_solved, 50)
     for num_page in range(1, max_page + 1):
         set_problem(num_page, 51)
     if sur != 0:
         set_problem(max_page + 1, sur + 1)
 
-    driver.get(path + "/rank/?language=CPP11&language=CPP14&language=CPP17")
+    driver.get(f"{path}/rank/?language=CPP11&language=CPP14&language=CPP17")
     id_submit = driver.find_element_by_class_name("submission-row").get_attribute('id')
-    driver.get("https://laptrinhonline.club/src/" + id_submit)
+    driver.get(f"https://laptrinhonline.club/src/{id_submit}")
     source_code = driver.find_element_by_class_name("codehilite").text
 if __name__ == '__main__':
     main()
